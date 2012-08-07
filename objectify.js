@@ -81,6 +81,15 @@ var Objectify = (function ($, undefined) {
     return result;
   }
 
+  function flatten(arr){
+     var flat = [];
+     for (var i = 0, l = arr.length; i < l; i++){
+         var type = Object.prototype.toString.call(arr[i]).split(' ').pop().split(']').shift().toLowerCase();
+         if (type) { flat = flat.concat(/^(array|collection|arguments|object)$/.test(type) ? flatten(arr[i]) : arr[i]); }
+     }
+     return flat;
+  }
+
   return self = {
     /***
      * This is the method that does the heavy lifting.
@@ -200,7 +209,7 @@ var Objectify = (function ($, undefined) {
     'walk': function ( obj ) {
       var namespace = Array.prototype.slice.call(arguments, 1);
       if ( primitive(namespace[0]) === 'Array' ) {
-        namespace = namespace[0];
+        namespace = flatten(namespace);
       }
 
       while ( namespace.length > 0 ) {
